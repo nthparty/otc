@@ -12,7 +12,7 @@ Oblivious transfer (OT) protocol message/response functionality implementations 
 
 Purpose
 -------
-This library provides data structures and methods for a basic `oblivious transfer (OT) <https://en.wikipedia.org/wiki/Oblivious_transfer>`_ protocol. Thanks to the underlying `oblivious <https://pypi.org/project/oblivious/>`_ library, users of this library have the option of relying either on pure Python implementations of cryptographic primitives or on wrappers for `libsodium <https://github.com/jedisct1/libsodium>`_.
+This library provides data structures and methods for a basic `oblivious transfer (OT) <https://en.wikipedia.org/wiki/Oblivious_transfer>`_ protocol defined in `work by Chou and Orlandi <https://eprint.iacr.org/2015/267.pdf>`_. Thanks to the underlying `oblivious <https://pypi.org/project/oblivious/>`_ library, users of this library have the option of relying either on pure Python implementations of cryptographic primitives or on wrappers for `libsodium <https://github.com/jedisct1/libsodium>`_.
 
 Package Installation and Usage
 ------------------------------

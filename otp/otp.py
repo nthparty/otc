@@ -161,4 +161,4 @@ class send(common): # pylint: disable=R0903
         return (enc(data_zero, nonce, k_0), enc(data_one, nonce, k_1))
 
 if __name__ == "__main__":
-    doctest.testmod()
+    doctest.testmod() # pragma: no cover

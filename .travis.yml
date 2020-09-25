@@ -1,0 +1,62 @@
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+matrix:
+  include:
+    - os: linux
+      language: python
+      python:
+        - "3.8"
+      before_install:
+        - wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz
+        - tar xvfz libsodium-1.0.18.tar.gz
+        - cd libsodium-1.0.18
+        - sudo ./configure
+        - sudo make
+        - sudo make install
+        - sudo ldconfig
+        - cd ..
+      install:
+        - pip install pylint
+        - pip install coverage
+        - pip install .
+    - os: osx
+      language: generic
+      before_cache:
+        - brew cleanup
+        - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete
+      cache:
+        ccache: true
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - /usr/local/Homebrew
+      before_install:
+        - brew update
+        - brew install libsodium
+        - brew install ccache
+        - brew install openssl readline
+        - brew upgrade python@3.8
+        - sudo python3.8 -m pip install -U pip
+        - sudo python3.8 -m pip install setuptools
+      install:
+        - sudo python3.8 -m pip install pylint
+        - sudo python3.8 -m pip install coverage
+        - sudo python3.8 -m pip install nose
+        - sudo python3.8 -m pip install .
+    - os: windows
+      language: sh
+      before_install:
+        - wget https://github.com/jedisct1/libsodium/releases/download/1.0.18-RELEASE/libsodium-1.0.18-msvc.zip
+        - unzip libsodium-1.0.18-msvc.zip
+        - cp libsodium/x64/Release/v142/dynamic/libsodium.dll /usr/bin
+        - choco install python --version=3.8.3
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+      install:
+        - pip install pylint
+        - pip install coverage
+        - pip install nose
+        - pip install .
+script:
+  - pylint otp
+  - nosetests

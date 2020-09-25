@@ -4,7 +4,7 @@ otp
 
 Oblivious transfer (OT) protocol message/response functionality implementations based on Ed25519 primitives, including both pure-Python and libsodium-based variants.
 
-|pypi| |travis|
+|pypi| |travis| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/otp.svg
    :target: https://badge.fury.io/py/otp
@@ -12,6 +12,9 @@ Oblivious transfer (OT) protocol message/response functionality implementations 
 
 .. |travis| image:: https://travis-ci.com/nthparty/otp.svg?branch=master
     :target: https://travis-ci.com/nthparty/otp
+
+.. |coveralls| image:: https://coveralls.io/repos/github/nthparty/otp/badge.svg?branch=master
+   :target: https://coveralls.io/github/nthparty/otp?branch=master
 
 Purpose
 -------

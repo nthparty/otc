@@ -60,5 +60,5 @@ matrix:
         - pip install nose
         - pip install .
 script:
-  - pylint otp
+  - pylint otc
   - nosetests

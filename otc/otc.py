@@ -1,6 +1,6 @@
 """OT protocol functionalities.
-Oblivious transfer (OT) protocol message/response functionality
-implementations based on Ed25519 primitives.
+Oblivious transfer (OT) communications protocol message/response
+functionality implementations based on Ed25519 primitives.
 """
 
 import doctest

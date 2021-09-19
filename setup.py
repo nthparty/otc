@@ -7,7 +7,7 @@ setup(
     name="otc",
     version="1.0.0",
     packages=["otc",],
-    install_requires=[,
+    install_requires=[
         "pynacl~=1.4.0",
         "oblivious~=3.0.1"
     ],

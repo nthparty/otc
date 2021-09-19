@@ -1,8 +1,9 @@
-"""OT protocol functionalities.
+"""
 Oblivious transfer (OT) communications protocol message/response
 functionality implementations based on Ed25519 primitives.
 """
 
+from __future__ import annotations
 import doctest
 import nacl.encoding
 import nacl.hash
@@ -10,18 +11,18 @@ import nacl.secret
 import nacl.bindings
 import oblivious
 
-def _hash(bs):
+def _hash(bs: bytes) -> bytes:
     """
     Generic hash function for hashing keys.
     """
     return nacl.hash.blake2b(bytes(bs), encoder=nacl.encoding.RawEncoder)
 
-class common(): # pylint: disable=R0903
+class common: # pylint: disable=R0903
     """
     Wrapper class for an object that maintains a party's
     state.
     """
-    def __init__(self):
+    def __init__(self: common):
         self.secret = oblivious.rnd() # Secret key: x in Z/pZ.
         self.public = oblivious.bas(self.secret) # Public key: X = g^x.
 
@@ -29,14 +30,16 @@ class receive(common):
     """
     Wrapper class for an object that maintains the receiving
     party's state and builds receiver requests/responses.
+
     >>> r = receive()
     >>> (len(r.secret), len(r.public))
     (32, 32)
     """
-    def query(self, send_public, bit):
+    def query(self: receive, send_public: bytes, bit: int) -> bytes:
         """
         Build the initial query for two data messages
         from which to choose upon receipt.
+
         >>> (s, r) = (send(), receive())
         >>> req = r.query(s.public, 'abc')
         Traceback (most recent call last):
@@ -65,10 +68,13 @@ class receive(common):
 
         return B_s0 if bit == 0 else B_s1
 
-    def elect(self, send_public, bit, data_zero, data_one):
+    def elect(
+            self: receive, send_public: bytes, bit: int, data_zero: bytes, data_one: bytes
+        ) -> bytes:
         """
         Choose from the two supplied data messages, decrypting
         the one that was chosen at the time of the query.
+
         >>> (s, r) = (send(), receive())
         >>> r_public = r.query(s.public, 0)
         >>> messages = s.reply(r_public, bytes([123]*16),  bytes([234]*16))
@@ -112,14 +118,16 @@ class send(common): # pylint: disable=R0903
     """
     Wrapper class for an object that maintains the sending
     party's state and builds sender requests/responses.
+
     >>> s = send()
     >>> (len(s.secret), len(s.public))
     (32, 32)
     """
-    def reply(self, receive_public, data_zero, data_one):
+    def reply(self: send, receive_public: bytes, data_zero: bytes, data_one: bytes) -> tuple:
         """
         Build the reply (the two data messages) that should
         be sent in reply to a query.
+
         >>> (s, r) = (send(), receive())
         >>> req = r.query(s.public, 0)
         >>> rsp = s.reply(r.public, [123],  'abc')

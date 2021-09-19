@@ -5,9 +5,12 @@ with open("README.rst", "r") as fh:
 
 setup(
     name="otc",
-    version="0.1.0",
+    version="1.0.0",
     packages=["otc",],
-    install_requires=["pynacl", "oblivious",],
+    install_requires=[,
+        "pynacl~=1.4.0",
+        "oblivious~=3.0.1"
+    ],
     license="MIT",
     url="https://github.com/nthparty/otc",
     author="Andrei Lapets",

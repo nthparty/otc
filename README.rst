@@ -54,6 +54,16 @@ Finally, the receiver can decrypt their chosen payload::
 
 See the article `Privacy-Preserving Information Exchange Using Python <https://medium.com/nthparty/privacy-preserving-information-exchange-using-python-1a4a11bed3d5>`_ for a more detailed presentation of the this example.
 
+Documentation
+-------------
+.. include:: toc.rst
+
+The documentation can be generated automatically from the source files using `Sphinx <https://www.sphinx-doc.org/>`_::
+
+    python -m pip install sphinx sphinx-rtd-theme
+    cd docs
+    sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html
+
 Testing and Conventions
 -----------------------
 All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configuration details)::

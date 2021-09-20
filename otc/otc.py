@@ -1,6 +1,6 @@
 """
 Oblivious transfer (OT) communications protocol message/response
-functionality implementations based on Ed25519 primitives.
+functionality implementations based on Curve25519 primitives.
 """
 
 from __future__ import annotations

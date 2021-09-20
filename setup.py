@@ -17,7 +17,7 @@ setup(
     author_email="a@lapets.io",
     description="Oblivious transfer (OT) communications protocol "+\
                 "message/response functionality implementations "+\
-                "based on Ed25519 primitives.",
+                "based on Curve25519 primitives.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     test_suite="nose.collector",

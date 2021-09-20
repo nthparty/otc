@@ -52,7 +52,10 @@ exclude_patterns = ['_build']
 #
 html_theme = 'sphinx_rtd_theme'
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# Theme options for Read the Docs.
+html_theme_options = {
+    'display_version': True,
+    'collapse_navigation': True,
+    'navigation_depth': 1,
+    'titles_only': True
+}

@@ -130,6 +130,3 @@ dmypy.json
 
 # Coverage reports
 cover/
-
-# Sphinx auto-generated docs source
-docs/_source/

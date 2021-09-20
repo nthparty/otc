@@ -4,7 +4,7 @@ otc
 
 Oblivious transfer (OT) communications protocol message/response functionality implementations based on Curve25519 primitives, including both pure-Python and libsodium-based variants.
 
-|pypi| |travis| |coveralls|
+|pypi| |readthedocs| |travis| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/otc.svg
    :target: https://badge.fury.io/py/otc
@@ -12,9 +12,15 @@ Oblivious transfer (OT) communications protocol message/response functionality i
 
 .. |travis| image:: https://travis-ci.com/nthparty/otc.svg?branch=main
    :target: https://travis-ci.com/nthparty/otc
+   :alt: Travis CI build status.
 
 .. |coveralls| image:: https://coveralls.io/repos/github/nthparty/otc/badge.svg?branch=main
    :target: https://coveralls.io/github/nthparty/otc?branch=main
+   :alt: Coveralls test coverage summary.
+
+.. |readthedocs| image:: https://readthedocs.org/projects/otc/badge/?version=latest
+   :target: https://otc.readthedocs.io/en/latest/?badge=latest
+   :alt: Read the Docs documentation status.
 
 Purpose
 -------

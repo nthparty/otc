@@ -1,11 +1,11 @@
 from setuptools import setup
 
 with open("README.rst", "r") as fh:
-    long_description = fh.read()
+    long_description = fh.read().replace(".. include:: toc.rst\n\n", "")
 
 setup(
     name="otc",
-    version="1.0.0",
+    version="1.0.1",
     packages=["otc",],
     install_requires=[
         "pynacl~=1.4.0",

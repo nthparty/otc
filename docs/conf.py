@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'otc'
-copyright = '2021, Nth Party, Ltd.'
+copyright = '2020, Nth Party, Ltd' # Period omitted; precedes punctuation.
 author = 'Nth Party, Ltd.'
 
 # The full version, including alpha/beta/rc tags

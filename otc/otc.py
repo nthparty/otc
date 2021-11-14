@@ -5,17 +5,15 @@ functionality implementations based on Curve25519 primitives.
 
 from __future__ import annotations
 import doctest
-import nacl.encoding
-import nacl.hash
-import nacl.secret
-import nacl.bindings
+import hashlib
+import bcl
 import oblivious
 
 def _hash(bs: bytes) -> bytes:
     """
     Generic hash function for hashing keys.
     """
-    return nacl.hash.blake2b(bytes(bs), encoder=nacl.encoding.RawEncoder)
+    return hashlib.sha256(bs).digest()
 
 class common: # pylint: disable=R0903
     """
@@ -23,8 +21,11 @@ class common: # pylint: disable=R0903
     state.
     """
     def __init__(self: common):
-        self.secret = oblivious.rnd() # Secret key: x in Z/pZ.
-        self.public = oblivious.bas(self.secret) # Public key: X = g^x.
+        # Secret key: x in Z/pZ.
+        self.secret = bcl.secret(oblivious.rnd())
+
+        # Public key: X = g^x.
+        self.public = bcl.secret(oblivious.bas(self.secret))
 
 class receive(common):
     """
@@ -69,7 +70,8 @@ class receive(common):
         return B_s0 if bit == 0 else B_s1
 
     def elect(
-            self: receive, send_public: bytes, bit: int, data_zero: bytes, data_one: bytes
+            self: receive, send_public: bytes, bit: int,
+            data_zero: bytes, data_one: bytes
         ) -> bytes:
         """
         Choose from the two supplied data messages, decrypting
@@ -106,10 +108,10 @@ class receive(common):
         g_to_a = send_public
 
         # Build the decryption key g^(ab).
-        k_s = _hash(oblivious.mul(b, g_to_a))
+        k_s = bcl.secret(_hash(oblivious.mul(b, g_to_a)))
 
         # Decryption and decoding function.
-        dec = lambda c, k: nacl.secret.SecretBox(k).decrypt(bytes(24) + c)
+        dec = lambda c, k: bcl.symmetric.decrypt(k, bcl.cipher(bytes(24) + c))
 
         # Decrypt the chosen message.
         return dec(data_zero if bit == 0 else data_one, k_s)
@@ -123,7 +125,9 @@ class send(common): # pylint: disable=R0903
     >>> (len(s.secret), len(s.public))
     (32, 32)
     """
-    def reply(self: send, receive_public: bytes, data_zero: bytes, data_one: bytes) -> tuple:
+    def reply(
+            self: send, receive_public: bytes, data_zero: bytes, data_one: bytes
+        ) -> tuple:
         """
         Build the reply (the two data messages) that should
         be sent in reply to a query.
@@ -154,19 +158,18 @@ class send(common): # pylint: disable=R0903
         B_s = receive_public # pylint: disable=C0103
 
         # Build the key for the message for the zero case.
-        k_0 = _hash(oblivious.mul(a, B_s))
+        k_0 = bcl.secret(_hash(oblivious.mul(a, B_s)))
 
         # Build the key for the message for the one case.
-        k_1 = _hash(oblivious.mul(a, oblivious.sub(B_s, g_to_a)))
-
-        # Encrypt the messages for both cases.
-        nonce = bytes([0]*nacl.bindings.crypto_secretbox_NONCEBYTES)
+        k_1 = bcl.secret(_hash(oblivious.mul(a, oblivious.sub(B_s, g_to_a))))
 
         # Encryption and encoding function.
-        enc = lambda m, nonce, k: nacl.secret.SecretBox(k).encrypt(m, nonce)[-32:]
+        enc = lambda m, k: (
+            bcl.symmetric.encrypt(k, m, bcl.nonce(bcl.nonce.length))[-32:]
+        )
 
         # Encrypt the two messages.
-        return (enc(data_zero, nonce, k_0), enc(data_one, nonce, k_1))
+        return (enc(data_zero, k_0), enc(data_one, k_1))
 
 if __name__ == "__main__":
     doctest.testmod() # pragma: no cover

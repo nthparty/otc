@@ -9,7 +9,7 @@ matrix:
       python:
         - "3.8"
       before_install:
-        - wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz
+        - wget https://github.com/jedisct1/libsodium/releases/download/1.0.18-RELEASE/libsodium-1.0.18.tar.gz
         - tar xvfz libsodium-1.0.18.tar.gz
         - cd libsodium-1.0.18
         - sudo ./configure
@@ -28,7 +28,7 @@ matrix:
       osx_image: xcode10.2
       language: shell
       before_install:
-        - wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz
+        - wget https://github.com/jedisct1/libsodium/releases/download/1.0.18-RELEASE/libsodium-1.0.18.tar.gz
         - tar xvfz libsodium-1.0.18.tar.gz
         - cd libsodium-1.0.18
         - sudo ./configure
@@ -58,6 +58,6 @@ matrix:
         - pip install sphinx sphinx-rtd-theme
         - pip install .
 script:
+  - cd docs && sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html && cd ..
   - pylint otc
   - nosetests
-  - cd docs && sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html

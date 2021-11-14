@@ -10,8 +10,8 @@ Oblivious transfer (OT) communications protocol message/response functionality i
    :target: https://badge.fury.io/py/otc
    :alt: PyPI version and link.
 
-.. |travis| image:: https://travis-ci.com/nthparty/otc.svg?branch=main
-   :target: https://travis-ci.com/nthparty/otc
+.. |travis| image:: https://app.travis-ci.com/nthparty/otc.svg?branch=main
+   :target: https://app.travis-ci.com/nthparty/otc
    :alt: Travis CI build status.
 
 .. |coveralls| image:: https://coveralls.io/repos/github/nthparty/otc/badge.svg?branch=main

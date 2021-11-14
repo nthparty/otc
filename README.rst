@@ -43,20 +43,22 @@ Example
 ^^^^^^^
 Suppose that a sender wants to send exactly one of two payloads to a receiver (such as one of two decryption keys). Furthermore, the receiver does not want to reveal to the sender which of the two payloads they chose to receive. To begin, the sender creates a sender object `s` with a public key `s.public` that should be sent to the receiver::
 
-     s = otc.send()
+    >>> import otc
+    >>> s = otc.send()
 
 The receiver can then create a receiver object and use `s.public` to make an encrypted selection that the sender cannot decrypt::
 
-     r = otc.receive()
-     selection = r.query(s.public, 1)
+    >>> r = otc.receive()
+    >>> selection = r.query(s.public, 1)
 
 The sender can then send two encrypted replies based on the receiver's selection; the receiver will *only be able to decrypt the pre-selected payload*, and the sender *does not know* which of the two payloads can be decrypted by the receiver::
 
-     replies = s.reply(selection, bytes([0] * 16), bytes([255] * 16))
+    >>> replies = s.reply(selection, bytes([0] * 16), bytes([255] * 16))
 
 Finally, the receiver can decrypt their chosen payload::
 
-     r.elect(s.public, 1, *replies) # Evaluates to `bytes([255] * 16)`.
+    >>> r.elect(s.public, 1, *replies) == bytes([255] * 16) # Second message.
+    True
 
 See the article `Privacy-Preserving Information Exchange Using Python <https://medium.com/nthparty/privacy-preserving-information-exchange-using-python-1a4a11bed3d5>`_ for a more detailed presentation of the this example.
 
@@ -66,8 +68,8 @@ Documentation
 
 The documentation can be generated automatically from the source files using `Sphinx <https://www.sphinx-doc.org/>`_::
 
-    python -m pip install sphinx sphinx-rtd-theme
     cd docs
+    python -m pip install -r requirements.txt
     sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html
 
 Testing and Conventions
@@ -75,7 +77,7 @@ Testing and Conventions
 All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configuration details)::
 
     python -m pip install nose coverage
-    nosetests
+    nosetests --cover-erase
 
 Alternatively, all unit tests are included in the module itself and can be executed using `doctest <https://docs.python.org/3/library/doctest.html>`_::
 

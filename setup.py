@@ -3,9 +3,12 @@ from setuptools import setup
 with open("README.rst", "r") as fh:
     long_description = fh.read().replace(".. include:: toc.rst\n\n", "")
 
+name = "otc"
+version = "2.0.0"
+
 setup(
-    name="otc",
-    version="2.0.0",
+    name=name,
+    version=version,
     packages=["otc",],
     install_requires=[
         "bcl~=2.0",

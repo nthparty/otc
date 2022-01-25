@@ -10,17 +10,17 @@ Oblivious transfer (OT) communications protocol message/response functionality i
    :target: https://badge.fury.io/py/otc
    :alt: PyPI version and link.
 
-.. |travis| image:: https://app.travis-ci.com/nthparty/otc.svg?branch=main
-   :target: https://app.travis-ci.com/nthparty/otc
-   :alt: Travis CI build status.
+.. |readthedocs| image:: https://readthedocs.org/projects/otc/badge/?version=latest
+   :target: https://otc.readthedocs.io/en/latest/?badge=latest
+   :alt: Read the Docs documentation status.
+
+.. |actions| image:: https://github.com/nthparty/otc/workflows/lint-test-cover-docs/badge.svg
+   :target: https://github.com/nthparty/otc/actions/workflows/lint-test-cover-docs.yml
+   :alt: GitHub Actions status.
 
 .. |coveralls| image:: https://coveralls.io/repos/github/nthparty/otc/badge.svg?branch=main
    :target: https://coveralls.io/github/nthparty/otc?branch=main
    :alt: Coveralls test coverage summary.
-
-.. |readthedocs| image:: https://readthedocs.org/projects/otc/badge/?version=latest
-   :target: https://otc.readthedocs.io/en/latest/?badge=latest
-   :alt: Read the Docs documentation status.
 
 Purpose
 -------

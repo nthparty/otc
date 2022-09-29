@@ -4,6 +4,7 @@ functionality implementations based on Curve25519 primitives.
 """
 
 from __future__ import annotations
+from typing import Tuple, Union
 import doctest
 import hashlib
 import bcl
@@ -22,10 +23,10 @@ class common: # pylint: disable=R0903
     """
     def __init__(self: common):
         # Secret key: x in Z/pZ.
-        self.secret = bcl.secret(oblivious.rnd())
+        self.secret = oblivious.ristretto.scalar.random()
 
         # Public key: X = g^x.
-        self.public = bcl.secret(oblivious.bas(self.secret))
+        self.public = oblivious.ristretto.point.base(self.secret)
 
 class receive(common):
     """
@@ -36,7 +37,11 @@ class receive(common):
     >>> (len(r.secret), len(r.public))
     (32, 32)
     """
-    def query(self: receive, send_public: bytes, bit: int) -> bytes:
+    def query(
+            self: receive,
+            send_public: oblivious.ristretto.point,
+            bit: int
+        ) -> oblivious.ristretto.point:
         """
         Build the initial query for two data messages
         from which to choose upon receipt.
@@ -57,21 +62,22 @@ class receive(common):
             raise ValueError('election bit must be 0 or 1')
 
         # The sender's public key is A = g^a.
-        g_to_a = send_public
+        g_to_a: oblivious.ristretto.point = send_public
 
         # Below is the receiver's public key g^b.
-        g_to_b = self.public
+        g_to_b: oblivious.ristretto.point = self.public
 
-        # If receiver's election bit is 0, B = g^b.
-        # If receiver's election bit is 1, B = A * g^b.
-        B_s0 = g_to_b # pylint: disable=C0103
-        B_s1 = oblivious.add(g_to_a, g_to_b) # pylint: disable=C0103
-
-        return B_s0 if bit == 0 else B_s1
+        # Return B, where:
+        # * if receiver's election bit is 0, B = g^b, and
+        # * if receiver's election bit is 1, B = A * g^b.
+        return g_to_b if bit == 0 else g_to_a + g_to_b
 
     def elect(
-            self: receive, send_public: bytes, bit: int,
-            data_zero: bytes, data_one: bytes
+            self: receive,
+            send_public: oblivious.ristretto.point,
+            bit: int,
+            data_zero: Union[bytes, bytearray],
+            data_one: Union[bytes, bytearray]
         ) -> bytes:
         """
         Choose from the two supplied data messages, decrypting
@@ -102,13 +108,13 @@ class receive(common):
             raise ValueError('election bit must be 0 or 1')
 
         # This is the receiver's secret key b.
-        b = self.secret
+        b: oblivious.ristretto.scalar = self.secret
 
         # This is the sender's public key A = g^a.
-        g_to_a = send_public
+        g_to_a: oblivious.ristretto.point = send_public
 
         # Build the decryption key g^(ab).
-        k_s = bcl.secret(_hash(oblivious.mul(b, g_to_a)))
+        k_s = bcl.secret(_hash(b * g_to_a))
 
         # Decryption and decoding function.
         dec = lambda c, k: bcl.symmetric.decrypt(k, bcl.cipher(bytes(24) + c))
@@ -126,8 +132,11 @@ class send(common): # pylint: disable=R0903
     (32, 32)
     """
     def reply(
-            self: send, receive_public: bytes, data_zero: bytes, data_one: bytes
-        ) -> tuple:
+            self: send,
+            receive_public: oblivious.ristretto.point,
+            data_zero: Union[bytes, bytearray],
+            data_one: Union[bytes, bytearray]
+        ) -> Tuple[bcl.cipher, bcl.cipher]:
         """
         Build the reply (the two data messages) that should
         be sent in reply to a query.
@@ -150,18 +159,18 @@ class send(common): # pylint: disable=R0903
             raise ValueError('each message must be of length 16')
 
         # These are the sender's secret and public keys.
-        a = self.secret
-        g_to_a = self.public
+        a: oblivious.ristretto.scalar = self.secret
+        g_to_a: oblivious.ristretto.point = self.public
 
         # Second argument is receiver's public key B_s, which depends on
         # the receiver's election bit s and is B_0 = g^b or B_1 = A * g^b.
-        B_s = receive_public # pylint: disable=C0103
+        B_s: oblivious.ristretto.point = receive_public # pylint: disable=C0103
 
         # Build the key for the message for the zero case.
-        k_0 = bcl.secret(_hash(oblivious.mul(a, B_s)))
+        k_0 = bcl.secret(_hash(a * B_s))
 
         # Build the key for the message for the one case.
-        k_1 = bcl.secret(_hash(oblivious.mul(a, oblivious.sub(B_s, g_to_a))))
+        k_1 = bcl.secret(_hash(a * (B_s - g_to_a)))
 
         # Encryption and encoding function.
         enc = lambda m, k: (

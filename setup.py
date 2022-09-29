@@ -4,15 +4,15 @@ with open("README.rst", "r") as fh:
     long_description = fh.read().replace(".. include:: toc.rst\n\n", "")
 
 name = "otc"
-version = "3.0.0"
+version = "4.0.0"
 
 setup(
     name=name,
     version=version,
     packages=["otc",],
     install_requires=[
-        "bcl~=2.1",
-        "oblivious~=5.0"
+        "bcl~=2.3",
+        "oblivious~=6.0"
     ],
     license="MIT",
     url="https://github.com/nthparty/otc",

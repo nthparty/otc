@@ -1,0 +1,52 @@
+[project]
+name = "otc"
+version = "4.0.0"
+description = """\
+    Oblivious transfer (OT) communications protocol message/response \
+    functionality implementations based on Curve25519 primitives.\
+    """
+license = {text = "MIT"}
+authors = [
+    {name = "Andrei Lapets"},
+    {email = "a@lapets.io"}
+]
+readme = "README.rst"
+requires-python = ">=3.7"
+dependencies = [
+    "bcl~=2.3",
+    "oblivious[rbcl]~=6.0"
+]
+
+[project.urls]
+Repository = "https://github.com/nthparty/otc"
+Documentation = "https://otc.readthedocs.io"
+
+[project.optional-dependencies]
+docs = [
+    "toml~=0.10.2",
+    "sphinx~=4.2.0",
+    "sphinx-rtd-theme~=1.0.0"
+]
+test = [
+    "pytest~=7.0",
+    "pytest-cov~=3.0"
+]
+lint = [
+    "pylint~=2.14.0"
+]
+coveralls = [
+    "coveralls~=3.3.1"
+]
+publish = [
+    "build~=0.8",
+    "twine~=4.0"
+]
+
+[build-system]
+requires = [
+    "setuptools~=62.0"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules --ignore=docs --cov=otc --cov-report term-missing"

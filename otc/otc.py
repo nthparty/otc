@@ -1,6 +1,7 @@
 """
-Oblivious transfer (OT) communications protocol message/response
-functionality implementations based on Curve25519 primitives.
+Oblivious transfer (OT) communications protocol message/response functionality
+implementations based on `Curve25519 <https://cr.yp.to/ecdh.html>`__ and the
+`Ristretto <https://ristretto.group>`__ group.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ def _hash(bs: bytes) -> bytes:
     """
     return hashlib.sha256(bs).digest()
 
-class common: # pylint: disable=R0903
+class common:
     """
     Wrapper class for an object that maintains a party's
     state.
@@ -30,8 +31,8 @@ class common: # pylint: disable=R0903
 
 class receive(common):
     """
-    Wrapper class for an object that maintains the receiving
-    party's state and builds receiver requests/responses.
+    Wrapper class for an object that maintains the receiving party's state and
+    builds receiver requests/responses.
 
     >>> r = receive()
     >>> (len(r.secret), len(r.public))
@@ -43,8 +44,8 @@ class receive(common):
             bit: int
         ) -> oblivious.ristretto.point:
         """
-        Build the initial query for two data messages
-        from which to choose upon receipt.
+        Build the initial query for two data messages (from which one must be
+        chosen upon receipt).
 
         >>> (s, r) = (send(), receive())
         >>> req = r.query(s.public, 'abc')
@@ -58,6 +59,7 @@ class receive(common):
         """
         if not isinstance(bit, int):
             raise TypeError('election bit must be an integer')
+
         if not bit in [0, 1]:
             raise ValueError('election bit must be 0 or 1')
 
@@ -80,8 +82,8 @@ class receive(common):
             data_one: Union[bytes, bytearray]
         ) -> bytes:
         """
-        Choose from the two supplied data messages, decrypting
-        the one that was chosen at the time of the query.
+        Choose from the two supplied data messages, decrypting the one that was
+        chosen at the time of the query.
 
         >>> (s, r) = (send(), receive())
         >>> r_public = r.query(s.public, 0)
@@ -93,6 +95,9 @@ class receive(common):
         >>> messages = s.reply(r_public, bytes([123]*16), bytes([234]*16))
         >>> [n for n in r.elect(s.public, 1, *messages)] == ([234]*16)
         True
+
+        The election bit must be either the integer ``0`` or the integer ``1``.
+
         >>> r.elect(s.public, 'abc', *messages)
         Traceback (most recent call last):
           ...
@@ -104,6 +109,7 @@ class receive(common):
         """
         if not isinstance(bit, int):
             raise TypeError('election bit must be an integer')
+
         if not bit in [0, 1]:
             raise ValueError('election bit must be 0 or 1')
 
@@ -122,10 +128,10 @@ class receive(common):
         # Decrypt the chosen message.
         return dec(data_zero if bit == 0 else data_one, k_s)
 
-class send(common): # pylint: disable=R0903
+class send(common):
     """
-    Wrapper class for an object that maintains the sending
-    party's state and builds sender requests/responses.
+    Wrapper class for an object that maintains the sending party's state and
+    builds sender requests/responses.
 
     >>> s = send()
     >>> (len(s.secret), len(s.public))
@@ -138,11 +144,14 @@ class send(common): # pylint: disable=R0903
             data_one: Union[bytes, bytearray]
         ) -> Tuple[bcl.cipher, bcl.cipher]:
         """
-        Build the reply (the two data messages) that should
-        be sent in reply to a query.
+        Build the reply (the two data messages) that should be sent in reply to
+        a query.
 
         >>> (s, r) = (send(), receive())
         >>> req = r.query(s.public, 0)
+
+        Messages must be bytes-like objects that have length exactly ``16``.
+
         >>> rsp = s.reply(r.public, [123],  'abc')
         Traceback (most recent call last):
           ...
@@ -152,9 +161,12 @@ class send(common): # pylint: disable=R0903
           ...
         ValueError: each message must be of length 16
         """
-        if not isinstance(data_zero, (bytes, bytearray)) or\
-           not isinstance(data_one, (bytes, bytearray)):
+        if (
+            not isinstance(data_zero, (bytes, bytearray)) or
+            not isinstance(data_one, (bytes, bytearray))
+        ):
             raise TypeError('each message must be a bytes-like object')
+
         if len(data_zero) != 16 or len(data_zero) != 16:
             raise ValueError('each message must be of length 16')
 
@@ -164,7 +176,7 @@ class send(common): # pylint: disable=R0903
 
         # Second argument is receiver's public key B_s, which depends on
         # the receiver's election bit s and is B_0 = g^b or B_1 = A * g^b.
-        B_s: oblivious.ristretto.point = receive_public # pylint: disable=C0103
+        B_s: oblivious.ristretto.point = receive_public # pylint: disable=invalid-name
 
         # Build the key for the message for the zero case.
         k_0 = bcl.secret(_hash(a * B_s))
@@ -180,5 +192,5 @@ class send(common): # pylint: disable=R0903
         # Encrypt the two messages.
         return (enc(data_zero, k_0), enc(data_one, k_1))
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     doctest.testmod() # pragma: no cover

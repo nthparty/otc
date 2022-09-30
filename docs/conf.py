@@ -46,7 +46,8 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode'
+    'sphinx.ext.viewcode',
+    'sphinx_autodoc_typehints'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -59,6 +60,8 @@ exclude_patterns = ['_build']
 
 # Options to configure autodoc extension behavior.
 autodoc_member_order = 'bysource'
+autodoc_typehints = 'description'
+autodoc_typehints_description_target = 'documented'
 autodoc_preserve_defaults = True
 
 # Allow references/links to definitions found in the Python documentation

@@ -47,6 +47,10 @@ class receive(common):
         Build the initial query for two data messages (from which one must be
         chosen upon receipt).
 
+        :param send_public: Public key obtained from sender.
+        :param bit: Index (``0`` or ``1``) indicating choice of message to
+            receive.
+
         >>> (s, r) = (send(), receive())
         >>> req = r.query(s.public, 'abc')
         Traceback (most recent call last):
@@ -84,6 +88,14 @@ class receive(common):
         """
         Choose from the two supplied data messages, decrypting the one that was
         chosen at the time of the query.
+
+        :param send_public: Public key obtained from sender.
+        :param bit: Index (``0`` or ``1``) indicating choice of message to
+            receive.
+        :param data_zero: Ciphertext corresponding to first message
+            (*i.e.*, at index ``0``) from sender.
+        :param data_one: Ciphertext corresponding to second message
+            (*i.e.*, at index ``1``) from sender.
 
         >>> (s, r) = (send(), receive())
         >>> r_public = r.query(s.public, 0)
@@ -144,8 +156,14 @@ class send(common):
             data_one: Union[bytes, bytearray]
         ) -> Tuple[bcl.cipher, bcl.cipher]:
         """
-        Build the reply (the two data messages) that should be sent in reply to
-        a query.
+        Build the response (the two data messages) that should be sent in reply
+        to a query.
+
+        :param receive_public: Public key obtained from receiver.
+        :param data_zero: First message (*i.e.*, at index ``0``) of the two
+            from which the receiver must choose.
+        :param data_one: Second message (*i.e.*, at index ``1``) of the two
+            from which the receiver must choose.
 
         >>> (s, r) = (send(), receive())
         >>> req = r.query(s.public, 0)

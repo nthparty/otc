@@ -41,26 +41,44 @@ The library can be imported in the usual manner::
 
 Example
 ^^^^^^^
-Suppose that a sender wants to send exactly one of two payloads to a receiver (such as one of two decryption keys). Furthermore, the receiver does not want to reveal to the sender which of the two payloads they chose to receive. To begin, the sender creates a sender object `s` with a public key `s.public` that should be sent to the receiver::
+
+.. |send| replace:: ``send``
+.. _send: https://otc.readthedocs.io/en/4.0.0/_source/otc.html#otc.otc.send
+
+.. |reply| replace:: ``reply``
+.. _reply: https://otc.readthedocs.io/en/4.0.0/_source/otc.html#otc.otc.send.reply
+
+.. |receive| replace:: ``receive``
+.. _receive: https://otc.readthedocs.io/en/4.0.0/_source/otc.html#otc.otc.receive
+
+.. |query| replace:: ``query``
+.. _query: https://otc.readthedocs.io/en/4.0.0/_source/otc.html#otc.otc.receive.query
+
+.. |elect| replace:: ``elect``
+.. _elect: https://otc.readthedocs.io/en/4.0.0/_source/otc.html#otc.otc.receive.elect
+
+Suppose that a sender wants to send exactly one of two payloads to a receiver (such as one of two decryption keys). Furthermore, the receiver does not want to reveal to the sender which of the two payloads they chose to receive. To begin, the sender can create a |send|_ object ``s``. The sender can then send the public key ``s.public`` to the receiver (via some communication channel)::
 
     >>> import otc
     >>> s = otc.send()
+    >>> s.public.to_base64()
+    'LJKN1DmNwGiCGWl4O5DsJMIEnlJm6yhb1o2hYS8A4Hg='
 
-The receiver can then create a receiver object and use `s.public` to make an encrypted selection that the sender cannot decrypt::
+The receiver can create a |receive|_ object. Once they receive ``s.public`` from the sender (via some communications channel), they can use the |receive|_ object's |query|_ method to create an encrypted selection that the sender cannot decrypt. In the example below, the receiver is choosing the second message by supplying the integer ``1`` (where the two valid options are ``0`` or ``1``)::
 
     >>> r = otc.receive()
     >>> selection = r.query(s.public, 1)
 
-The sender can then send two encrypted replies based on the receiver's selection; the receiver will *only be able to decrypt the pre-selected payload*, and the sender *does not know* which of the two payloads can be decrypted by the receiver::
+The sender can then use its |send|_ object's |reply|_ method to create two encrypted replies based on the receiver's selection; the receiver will *only be able to decrypt the pre-selected payload*, and the sender *does not know* which of the two payloads can be decrypted by the receiver::
 
     >>> replies = s.reply(selection, bytes([0] * 16), bytes([255] * 16))
 
-Finally, the receiver can decrypt their chosen payload::
+Finally, the receiver can decrypt their chosen payload using the |receive|_ object's |elect|_ method. The example below confirms that the receiver has indeed received an encrypted version of the second message::
 
-    >>> r.elect(s.public, 1, *replies) == bytes([255] * 16) # Second message.
+    >>> r.elect(s.public, 1, *replies) == bytes([255] * 16)
     True
 
-See the article `Privacy-Preserving Information Exchange Using Python <https://medium.com/nthparty/privacy-preserving-information-exchange-using-python-1a4a11bed3d5>`__ for a more detailed presentation of the this example.
+See the article `Privacy-Preserving Information Exchange Using Python <https://medium.com/nthparty/privacy-preserving-information-exchange-using-python-1a4a11bed3d5>`__ for a more detailed presentation of this example.
 
 Development
 -----------

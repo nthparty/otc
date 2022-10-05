@@ -45,18 +45,25 @@ class receive(common):
         ) -> oblivious.ristretto.point:
         """
         Build the initial query for two data messages (from which one must be
-        chosen upon receipt).
+        chosen upon receipt). The returned result is the receiver's public
+        key, which can be shared with the sender.
 
         :param send_public: Public key obtained from sender.
         :param bit: Index (``0`` or ``1``) indicating choice of message to
             receive.
 
         >>> (s, r) = (send(), receive())
-        >>> req = r.query(s.public, 'abc')
+        >>> r_public = r.query(s.public, 1)
+        >>> isinstance(r_public, oblivious.ristretto.point)
+        True
+
+        The supplied index must be either the integer ``0`` or the integer ``1``.
+
+        >>> r_public = r.query(s.public, 'abc')
         Traceback (most recent call last):
           ...
         TypeError: election bit must be an integer
-        >>> req = r.query(s.public, 3)
+        >>> r_public = r.query(s.public, 3)
         Traceback (most recent call last):
           ...
         ValueError: election bit must be 0 or 1
@@ -100,12 +107,12 @@ class receive(common):
         >>> (s, r) = (send(), receive())
         >>> r_public = r.query(s.public, 0)
         >>> messages = s.reply(r_public, bytes([123]*16),  bytes([234]*16))
-        >>> [n for n in r.elect(s.public, 0, *messages)] == ([123]*16)
+        >>> list(r.elect(s.public, 0, *messages)) == ([123]*16)
         True
         >>> (s, r) = (send(), receive())
         >>> r_public = r.query(s.public, 1)
         >>> messages = s.reply(r_public, bytes([123]*16), bytes([234]*16))
-        >>> [n for n in r.elect(s.public, 1, *messages)] == ([234]*16)
+        >>> list(r.elect(s.public, 1, *messages)) == ([234]*16)
         True
 
         The election bit must be either the integer ``0`` or the integer ``1``.
@@ -154,7 +161,7 @@ class send(common):
             receive_public: oblivious.ristretto.point,
             data_zero: Union[bytes, bytearray],
             data_one: Union[bytes, bytearray]
-        ) -> Tuple[bcl.cipher, bcl.cipher]:
+        ) -> Tuple[bytes, bytes]:
         """
         Build the response (the two data messages) that should be sent in reply
         to a query.
@@ -166,7 +173,12 @@ class send(common):
             from which the receiver must choose.
 
         >>> (s, r) = (send(), receive())
-        >>> req = r.query(s.public, 0)
+        >>> r_public = r.query(s.public, 0)
+        >>> messages = s.reply(r_public, bytes([123]*16),  bytes([234]*16))
+        >>> all(isinstance(message, bytes) for message in messages)
+        True
+        >>> list(r.elect(s.public, 0, *messages)) == ([123]*16)
+        True
 
         Messages must be bytes-like objects that have length exactly ``16``.
 

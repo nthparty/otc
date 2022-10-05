@@ -3,7 +3,8 @@ name = "otc"
 version = "4.0.0"
 description = """\
     Oblivious transfer (OT) communications protocol message/response \
-    functionality implementations based on Curve25519 primitives.\
+    functionality implementations based on Curve25519 and the Ristretto \
+    group.\
     """
 license = {text = "MIT"}
 authors = [
